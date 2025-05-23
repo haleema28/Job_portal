@@ -1,0 +1,44 @@
+{% extends 'accounts/base.html' %}
+{% block title %}Welcome - Job Portal{% endblock %}
+{% block content %}
+<div class="py-5 bg-white rounded-4 shadow-sm mb-5">
+    <div class="row align-items-center">
+        <div class="col-md-6 text-center text-md-start px-5">
+            <h1 class="display-4 fw-bold mb-3"><i class="fa-solid fa-briefcase text-primary"></i> Welcome to the Job Portal</h1>
+            <p class="lead mb-4">Find your dream job or the perfect candidate. Fast, easy, and free.</p>
+            <div class="d-flex flex-column flex-md-row gap-3">
+                <a href="{% url 'job_list' %}" class="btn btn-lg btn-outline-primary"><i class="fa-solid fa-magnifying-glass"></i> Browse Jobs</a>
+                <a href="{% url 'register_job_seeker' %}" class="btn btn-lg btn-success"><i class="fa-solid fa-user-plus"></i> Register as Job Seeker</a>
+                <a href="{% url 'register_employer' %}" class="btn btn-lg btn-warning text-white"><i class="fa-solid fa-user-tie"></i> Register as Employer</a>
+            </div>
+        </div>
+        <div class="col-md-6 text-center d-none d-md-block">
+            <img src="https://img.freepik.com/free-vector/job-interview-concept-illustration_114360-1679.jpg" alt="Job Portal" class="img-fluid rounded-4 shadow" style="max-height:340px;">
+        </div>
+    </div>
+</div>
+<div class="row justify-content-center mb-5">
+    <div class="col-md-4">
+        <div class="card border-0 shadow h-100">
+            <div class="card-body text-center">
+                <i class="fa-solid fa-user-tie fa-3x text-warning mb-3"></i>
+                <h3 class="card-title">Employer</h3>
+                <p class="card-text">Post jobs, manage applications, and find the best talent for your company.</p>
+                <a href="{% url 'login' %}?next={% url 'employer_dashboard' %}" class="btn btn-primary w-100 mb-2">Login as Employer</a>
+                <a href="{% url 'register_employer' %}" class="btn btn-link w-100">Register as Employer</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow h-100">
+            <div class="card-body text-center">
+                <i class="fa-solid fa-user fa-3x text-success mb-3"></i>
+                <h3 class="card-title">Job Seeker</h3>
+                <p class="card-text">Browse jobs, apply easily, and track your applications in one place.</p>
+                <a href="{% url 'login' %}?next={% url 'job_seeker_dashboard' %}" class="btn btn-success w-100 mb-2">Login as Job Seeker</a>
+                <a href="{% url 'register_job_seeker' %}" class="btn btn-link w-100">Register as Job Seeker</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

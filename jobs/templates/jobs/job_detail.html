@@ -1,0 +1,55 @@
+{% extends 'accounts/base.html' %}
+{% block title %}{{ job.title }} - Job Portal{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-lg border-0 mb-4">
+            <div class="card-body p-5">
+                <div class="d-flex align-items-center mb-3">
+                    {% with profile=job.employer.company_profile %}
+                        {% if profile.logo %}<img src="{{ profile.logo.url }}" alt="Logo" class="me-3 rounded" style="max-height:60px;max-width:60px;">{% endif %}
+                        <div>
+                            <h2 class="fw-bold mb-0">{{ job.title }}</h2>
+                            <span class="text-muted">{{ profile.company_name }}</span>
+                            {% if profile.website %}<br><a href="{{ profile.website }}" target="_blank" class="small text-muted">{{ profile.website }}</a>{% endif %}
+                        </div>
+                    {% endwith %}
+                </div>
+                <div class="mb-3"><i class="fa-solid fa-location-dot text-danger"></i> <strong>Location:</strong> {{ job.location }}</div>
+                <div class="mb-3"><i class="fa-solid fa-calendar"></i> <strong>Posted At:</strong> {{ job.posted_at|date:'Y-m-d H:i' }}</div>
+                <div class="mb-3"><i class="fa-solid fa-money-bill-wave text-success"></i> <strong>Salary:</strong> {{ job.salary|default:'Not specified' }}</div>
+                <div class="mb-3"><i class="fa-solid fa-clock text-info"></i> <strong>Duration:</strong> {{ job.duration|default:'Not specified' }}</div>
+                <div class="mb-3"><i class="fa-solid fa-briefcase text-secondary"></i> <strong>Job Type:</strong> {{ job.job_type|default:'Not specified' }}</div>
+                <div class="mb-4">
+                    <h5 class="fw-bold">Job Description</h5>
+                    <p>{{ job.description }}</p>
+                </div>
+                {% with profile=job.employer.company_profile %}
+                <div class="mb-4">
+                    <h5 class="fw-bold">About the Company</h5>
+                    {% if profile.description %}<p class="text-muted">{{ profile.description|linebreaksbr }}</p>{% endif %}
+                </div>
+                {% endwith %}
+                {% if job.requirements %}
+                <div class="mb-4">
+                    <h5 class="fw-bold">Requirements</h5>
+                    <p>{{ job.requirements|linebreaksbr }}</p>
+                </div>
+                {% endif %}
+                {% if job.benefits %}
+                <div class="mb-4">
+                    <h5 class="fw-bold">Benefits</h5>
+                    <p>{{ job.benefits|linebreaksbr }}</p>
+                </div>
+                {% endif %}
+                <div class="d-flex gap-2">
+                    {% if user.is_authenticated and user.role == 'job_seeker' %}
+                        <a href="{% url 'apply_job' job.pk %}" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> Apply</a>
+                    {% endif %}
+                    <a href="{% url 'job_list' %}" class="btn btn-outline-secondary">Back to Jobs</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

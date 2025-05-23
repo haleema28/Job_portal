@@ -1,0 +1,75 @@
+{% extends 'accounts/base.html' %}
+{% block title %}Employer Dashboard - Job Portal{% endblock %}
+{% block content %}
+<h2 class="fw-bold mb-4"><i class="fa-solid fa-gauge text-primary"></i> Employer Dashboard</h2>
+{% if not jobs %}
+<div class="alert alert-info text-center">You have not posted any jobs yet. Click 'Post Job' to get started!</div>
+{% endif %}
+{% if jobs %}
+  <div class="accordion" id="jobsAccordion">
+    {% for job in jobs %}
+      <div class="accordion-item mb-3 shadow-sm border-0">
+        <h2 class="accordion-header" id="heading{{ job.id }}">
+          <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ job.id }}" aria-expanded="false" aria-controls="collapse{{ job.id }}">
+            <span class="me-2"><i class="fa-solid fa-briefcase"></i></span> {{ job.title }} <span class="ms-2 text-muted">({{ job.applications.count }} applications)</span>
+          </button>
+        </h2>
+        <div id="collapse{{ job.id }}" class="accordion-collapse collapse" aria-labelledby="heading{{ job.id }}" data-bs-parent="#jobsAccordion">
+          <div class="accordion-body">
+            <div class="mb-2"><i class="fa-solid fa-location-dot text-danger"></i> <strong>Location:</strong> {{ job.location }}</div>
+            <div class="mb-2"><i class="fa-solid fa-calendar"></i> <strong>Posted At:</strong> {{ job.posted_at|date:'Y-m-d H:i' }}</div>
+            <div class="mb-2"><i class="fa-solid fa-money-bill-wave text-success"></i> <strong>Salary:</strong> {{ job.salary|default:'Not specified' }}</div>
+            <div class="mb-2"><i class="fa-solid fa-clock text-info"></i> <strong>Duration:</strong> {{ job.duration|default:'Not specified' }}</div>
+            <div class="mb-2"><i class="fa-solid fa-briefcase text-secondary"></i> <strong>Job Type:</strong> {{ job.job_type|default:'Not specified' }}</div>
+            {% if job.requirements %}
+            <div class="mb-2"><strong>Requirements:</strong> {{ job.requirements|linebreaksbr }}</div>
+            {% endif %}
+            {% if job.benefits %}
+            <div class="mb-2"><strong>Benefits:</strong> {{ job.benefits|linebreaksbr }}</div>
+            {% endif %}
+            <h5 class="fw-bold mt-4">Applications</h5>
+            {% if job.applications.all %}
+              <div class="table-responsive">
+                <table class="table table-sm align-middle">
+                  <thead class="table-light"><tr><th>Applicant</th><th>Resume</th><th>Applied At</th><th>Status</th><th>Action</th></tr></thead>
+                  <tbody>
+                    {% for app in job.applications.all %}
+                    <tr>
+                      <td>{{ app.job_seeker.username }}</td>
+                      <td>
+                        {% if app.resume %}
+                          <a href="{{ app.resume.url }}" target="_blank" class="btn btn-sm btn-outline-info"><i class="fa-solid fa-download"></i> Download</a>
+                        {% else %}
+                          <span class="text-muted">No resume</span>
+                        {% endif %}
+                      </td>
+                      <td>{{ app.applied_at|date:'Y-m-d H:i' }}</td>
+                      <td>{{ app.get_status_display }}</td>
+                      <td>
+                        <a href="{% url 'application_messages' app.id %}" class="btn btn-sm btn-outline-secondary me-2"><i class="fa-solid fa-comments"></i> Messages</a>
+                        <form method="post" action="{% url 'update_application_status' app.id %}" class="d-inline d-flex align-items-center">{% csrf_token %}
+                          <select name="status" class="form-select form-select-sm me-2">
+                            {% for value, label in app.STATUS_CHOICES %}
+                              <option value="{{ value }}" {% if app.status == value %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                          </select>
+                          <button type="submit" class="btn btn-sm btn-outline-primary">Update</button>
+                        </form>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            {% else %}
+              <p>No applications yet.</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="alert alert-info">You have not posted any jobs yet.</div>
+{% endif %}
+{% endblock %} 

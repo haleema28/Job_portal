@@ -1,0 +1,35 @@
+{% extends 'accounts/base.html' %}
+{% block title %}Messages - Job Portal{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-7">
+        <div class="card shadow-lg border-0">
+            <div class="card-body p-5">
+                <h2 class="mb-4 text-center"><i class="fa-solid fa-comments text-primary"></i> Application Messages</h2>
+                <div class="mb-3">
+                    <strong>Job:</strong> {{ application.job.title }}<br>
+                    <strong>Applicant:</strong> {{ application.job_seeker.username }}<br>
+                    <strong>Employer:</strong> {{ application.job.employer.username }}
+                </div>
+                <hr>
+                <div class="mb-4" style="max-height: 300px; overflow-y: auto; background: #f8f9fa; border: 1px solid #ddd; padding: 1rem;">
+                    {% for msg in messages %}
+                        <div class="mb-2">
+                            <strong>{{ msg.sender.username }}</strong> <span class="text-muted">({{ msg.timestamp|date:'Y-m-d H:i' }})</span><br>
+                            {{ msg.content|linebreaksbr }}
+                        </div>
+                    {% empty %}
+                        <p>No messages yet.</p>
+                    {% endfor %}
+                </div>
+                <form method="post" class="d-flex mb-3">
+                    {% csrf_token %}
+                    <textarea name="content" class="form-control me-2" rows="2" placeholder="Type your message..."></textarea>
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> Send</button>
+                </form>
+                <a href="{% if user.role == 'employer' %}{% url 'employer_dashboard' %}{% else %}{% url 'job_seeker_dashboard' %}{% endif %}" class="btn btn-outline-secondary">Back</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

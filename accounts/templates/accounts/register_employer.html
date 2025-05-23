@@ -1,0 +1,21 @@
+{% extends 'accounts/base.html' %}
+{% block title %}Register as Employer - Job Portal{% endblock %}
+{% block content %}
+<div class="row justify-content-center align-items-center" style="min-height:60vh;">
+    <div class="col-md-6">
+        <div class="card shadow-lg border-0">
+            <div class="card-body p-5">
+                <h2 class="mb-4 text-center"><i class="fa-solid fa-user-tie text-warning"></i> Register as Employer</h2>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary w-100">Register</button>
+                </form>
+                <div class="mt-4 text-center">
+                    <a href="{% url 'login' %}" class="btn btn-link">Back to Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

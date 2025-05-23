@@ -1,0 +1,57 @@
+{% extends 'accounts/base.html' %}
+{% block title %}Job Listings - Job Portal{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold"><i class="fa-solid fa-briefcase text-primary"></i> Job Listings</h2>
+    {% if user.is_authenticated and user.role == 'employer' %}
+        <a href="{% url 'job_post' %}" class="btn btn-success"><i class="fa-solid fa-plus"></i> Post a Job</a>
+    {% endif %}
+</div>
+<form method="get" class="row g-3 mb-4">
+    <div class="col-md-4">
+        <input type="text" name="q" class="form-control" placeholder="Search by title..." value="{{ search_query }}">
+    </div>
+    <div class="col-md-3">
+        <input type="text" name="location" class="form-control" placeholder="Location..." value="{{ search_location }}">
+    </div>
+    <div class="col-md-3">
+        <input type="text" name="employer" class="form-control" placeholder="Employer..." value="{{ search_employer }}">
+    </div>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-primary w-100"><i class="fa-solid fa-search"></i> Search</button>
+    </div>
+</form>
+{% if not jobs %}
+<div class="alert alert-info text-center">No jobs found. Be the first to post a job!</div>
+{% endif %}
+<div class="row g-4">
+    {% for job in jobs %}
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-2">
+                    {% with profile=job.employer.company_profile %}
+                        {% if profile.logo %}<img src="{{ profile.logo.url }}" alt="Logo" class="me-2 rounded" style="max-height:40px;max-width:40px;">{% endif %}
+                        <div>
+                            <span class="fw-bold">{{ profile.company_name }}</span><br>
+                            {% if profile.website %}<a href="{{ profile.website }}" target="_blank" class="small text-muted">Website <i class="fa-solid fa-arrow-up-right-from-square fa-xs"></i></a>{% endif %}
+                        </div>
+                    {% endwith %}
+                </div>
+                <h5 class="card-title mb-2">{{ job.title }}</h5>
+                <div class="mb-2"><i class="fa-solid fa-location-dot text-danger"></i> {{ job.location }}</div>
+                <div class="mb-2"><i class="fa-solid fa-money-bill-wave text-success"></i> {{ job.salary|default:'Not specified' }}</div>
+                <div class="mb-2"><i class="fa-solid fa-clock text-info"></i> {{ job.duration|default:'Not specified' }}</div>
+                <div class="mb-2"><i class="fa-solid fa-briefcase text-secondary"></i> {{ job.job_type|default:'Not specified' }}</div>
+                <div class="mb-2 text-muted small"><i class="fa-solid fa-calendar"></i> {{ job.posted_at|date:'Y-m-d H:i' }}</div>
+                <a href="{% url 'job_detail' job.pk %}" class="btn btn-outline-primary w-100">View Details</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-info text-center">No jobs found.</div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %} 

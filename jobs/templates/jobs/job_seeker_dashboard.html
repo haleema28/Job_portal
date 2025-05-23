@@ -1,0 +1,48 @@
+{% extends 'accounts/base.html' %}
+{% block title %}My Applications - Job Portal{% endblock %}
+{% block content %}
+<h2 class="fw-bold mb-4"><i class="fa-solid fa-gauge text-success"></i> My Applications</h2>
+{% if not applications %}
+<div class="alert alert-info text-center">You have not applied to any jobs yet. Start browsing and apply now!</div>
+{% endif %}
+{% if applications %}
+  <div class="table-responsive">
+    <table class="table table-bordered align-middle shadow-sm">
+      <thead class="table-light">
+        <tr>
+          <th>Job Title</th>
+          <th>Company</th>
+          <th>Applied At</th>
+          <th>Status</th>
+          <th>Messages</th>
+          <th>Resume</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for app in applications %}
+        <tr>
+          <td><a href="{% url 'job_detail' app.job.pk %}">{{ app.job.title }}</a></td>
+          <td>{% with profile=app.job.employer.company_profile %}
+                <span class="fw-bold">{{ profile.company_name }}</span>
+                {% if profile.logo %}<img src="{{ profile.logo.url }}" alt="Logo" class="ms-2 rounded" style="max-height:30px;max-width:30px;vertical-align:middle;">{% endif %}
+              {% endwith %}
+          </td>
+          <td>{{ app.applied_at|date:'Y-m-d H:i' }}</td>
+          <td><span class="badge {% if app.status == 'accepted' %}bg-success{% elif app.status == 'rejected' %}bg-danger{% elif app.status == 'reviewed' %}bg-info text-dark{% else %}bg-secondary{% endif %}">{{ app.status|default:'Pending'|capfirst }}</span></td>
+          <td><a href="{% url 'application_messages' app.id %}" class="btn btn-sm btn-outline-secondary"><i class="fa-solid fa-comments"></i> Messages</a></td>
+          <td>
+            {% if app.resume %}
+              <a href="{{ app.resume.url }}" target="_blank" class="btn btn-sm btn-outline-info"><i class="fa-solid fa-download"></i> Download</a>
+            {% else %}
+              <span class="text-muted">No resume</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <div class="alert alert-info">You have not applied to any jobs yet.</div>
+{% endif %}
+{% endblock %} 
